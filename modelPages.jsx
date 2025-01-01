@@ -151,10 +151,10 @@ const App = () => {
         </Typography>
 
         {/* Breadcrumbs */}
-        <Box sx={{marginBottom: '16px' }}>
+        <Box sx={{ marginBottom: '16px' }}>
           <Breadcrumbs aria-label="breadcrumb">
             <Link underline="hover" color="inherit" href="/">
-            Home
+              Home
             </Link>
             <Link underline="hover" color="inherit" href="/fraud-detection">
               Fraud Detection
@@ -211,7 +211,7 @@ const App = () => {
         {/* Split Content */}
         <SplitContainer>
           <Box sx={{ flex: 1 }}>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1" paragraph sx={{ marginBottom: '40px' }}>
               This notebook implements a comprehensive fraud detection system for e-commerce transactions. It incorporates advanced feature engineering, class imbalance handling, and model training, including ensemble methods to improve prediction accuracy.
             </Typography>
 
