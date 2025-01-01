@@ -1,7 +1,42 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Button, TextField, Avatar, Chip, Link, Card, CardContent } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Box,
+  TextField,
+  Avatar,
+  Chip,
+  IconButton,
+  Tooltip,
+  Snackbar,
+  Alert,
+  Breadcrumbs,
+  Link
+} from '@mui/material';
 import { styled } from '@mui/system';
-import { AccountCircle, Assignment, CheckCircle, Timer, FolderOpen, Description, GitHub, Code } from '@mui/icons-material';
+import {
+  AccountCircle,
+  Assignment,
+  CheckCircle,
+  Timer,
+  Description,
+  GitHub,
+  Code,
+  ThumbUp,
+  ThumbDown,
+  Visibility,
+  Home as HomeIcon
+} from '@mui/icons-material';
+
+import HistoryIcon from '@mui/icons-material/History';
 
 const Content = styled(Box)({
   flexGrow: 1,
@@ -14,14 +49,6 @@ const Header = styled(AppBar)({
   color: '#333',
   boxShadow: 'none',
   borderBottom: '1px solid #ddd',
-});
-
-const StyledButton = styled(Button)({
-  borderRadius: '20px',
-  textTransform: 'none',
-  padding: '8px 16px',
-  fontSize: '14px',
-  fontWeight: 'bold',
 });
 
 const MetadataSection = styled(Box)({
@@ -42,30 +69,65 @@ const SidePanel = styled(Box)({
   padding: '16px',
   backgroundColor: '#fff',
   borderRadius: '8px',
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
 });
 
-const DataContractCard = ({ title, description }) => (
-  <Card sx={{ maxWidth: 345, margin: '16px' }}>
-    <CardContent>
-      <Typography variant="h6" fontWeight="bold">
-        {title}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {description}
-      </Typography>
-    </CardContent>
-  </Card>
-);
+const StyledChip = styled(Chip)({
+  borderRadius: '12px',
+  fontSize: '12px',
+  fontWeight: 'bold',
+  padding: '4px 8px',
+  justifyContent: 'flex-start',
+  gap: '4px',
+  height: '28px',
+  '.MuiChip-icon': {
+    fontSize: '16px',
+  },
+});
 
 const App = () => {
-  const dataContracts = [
-    { title: 'Fraud Prevention Contract', description: 'Defines terms for fraud detection in e-commerce transactions.' },
-    { title: 'Data Validation Contract', description: 'Specifies validation rules for incoming data streams.' },
-  ];
+  // State variables
+  const [upvoted, setUpvoted] = useState(false);
+  const [downvoted, setDownvoted] = useState(false);
+  const [viewed, setViewed] = useState(false);
+  const [alert, setAlert] = useState({ open: false, message: '', severity: '' });
+
+  const handleUpvote = () => {
+    if (downvoted) setDownvoted(false); // Ensure downvote is removed if upvoted
+    setUpvoted(!upvoted);
+    setAlert({
+      open: true,
+      message: upvoted ? 'Upvote removed' : 'Upvoted successfully!',
+      severity: upvoted ? 'info' : 'success',
+    });
+  };
+
+  const handleDownvote = () => {
+    if (upvoted) setUpvoted(false); // Ensure upvote is removed if downvoted
+    setDownvoted(!downvoted);
+    setAlert({
+      open: true,
+      message: downvoted ? 'Downvote removed' : 'Downvoted successfully!',
+      severity: downvoted ? 'info' : 'error',
+    });
+  };
+
+  const handleView = () => {
+    setViewed(!viewed);
+    setAlert({
+      open: true,
+      message: viewed ? 'Marked as not viewed' : 'Marked as viewed',
+      severity: viewed ? 'info' : 'success',
+    });
+  };
+
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* Header */}
       <Header position="static">
         <Toolbar>
           <TextField
@@ -76,20 +138,35 @@ const App = () => {
               width: '300px',
               borderRadius: '30px',
               backgroundColor: '#fff',
-              marginLeft: 'auto'
+              marginLeft: 'auto',
             }}
           />
         </Toolbar>
       </Header>
 
+      {/* Main Content */}
       <Container maxWidth="lg">
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Fraud Detection Ecommerce Transaction
         </Typography>
 
+        {/* Breadcrumbs */}
+        <Box sx={{marginBottom: '16px' }}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link underline="hover" color="inherit" href="/">
+            Home
+            </Link>
+            <Link underline="hover" color="inherit" href="/fraud-detection">
+              Fraud Detection
+            </Link>
+            <Typography color="text.primary">Ecommerce Transaction</Typography>
+          </Breadcrumbs>
+        </Box>
+
+        {/* Metadata Section */}
         <MetadataSection>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <Avatar alt=" " src="/placeholder-avatar.png" />
+            <Avatar alt="Profile Avatar" src="/placeholder-avatar.png" />
             <Box>
               <Typography variant="subtitle2" fontWeight="bold">
                 FDET
@@ -98,10 +175,40 @@ const App = () => {
                 Silver
               </Typography>
             </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Tooltip title="Upvote">
+                <IconButton
+                  aria-label="upvote"
+                  onClick={handleUpvote}
+                  style={{ color: upvoted ? '#4CAF50' : '#E0E0E0' }}
+                >
+                  <ThumbUp />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Downvote">
+                <IconButton
+                  aria-label="downvote"
+                  onClick={handleDownvote}
+                  style={{ color: downvoted ? '#F44336' : '#E0E0E0' }}
+                >
+                  <ThumbDown />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Click to mark as viewed">
+                <IconButton
+                  aria-label="view"
+                  onClick={handleView}
+                  style={{ color: viewed ? '#4CAF50' : '#E0E0E0' }}
+                >
+                  <Visibility />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
-          <Chip icon={<Timer />} label="Latest Version 2.1.4" variant="outlined" />
+          <Chip icon={<HistoryIcon />} label="Latest Version 2.1.4" variant="outlined" />
         </MetadataSection>
 
+        {/* Split Content */}
         <SplitContainer>
           <Box sx={{ flex: 1 }}>
             <Typography variant="body1" paragraph>
@@ -113,12 +220,6 @@ const App = () => {
             </Typography>
             <TableContainer>
               <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><Typography variant="subtitle1" fontWeight="bold">Role</Typography></TableCell>
-                    <TableCell><Typography variant="subtitle1" fontWeight="bold">Description</Typography></TableCell>
-                  </TableRow>
-                </TableHead>
                 <TableBody>
                   <TableRow>
                     <TableCell>
@@ -127,7 +228,9 @@ const App = () => {
                         Data Owner
                       </Box>
                     </TableCell>
-                    <TableCell>Owns the data and has the ultimate responsibility for its use and protection.</TableCell>
+                    <TableCell>
+                      Owns the data and has the ultimate responsibility for its use and protection.
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
@@ -136,7 +239,9 @@ const App = () => {
                         Data Steward
                       </Box>
                     </TableCell>
-                    <TableCell>Responsible for the management and oversight of the data's lifecycle and quality.</TableCell>
+                    <TableCell>
+                      Responsible for the management and oversight of the data's lifecycle and quality.
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
@@ -145,62 +250,83 @@ const App = () => {
                         Data Provider
                       </Box>
                     </TableCell>
-                    <TableCell>Provides the data and ensures its accuracy and compliance.</TableCell>
+                    <TableCell>
+                      Provides the data and ensures its accuracy and compliance.
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
           </Box>
 
+          {/* Side Panel */}
           <SidePanel>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Versions in Production
+              Production Versions
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-              <Chip label="Version 2.1.4" color="primary" />
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                marginBottom: '16px',
+              }}
+            >
+              <Chip label="Version 2.1.4" variant="outlined" />
               <Chip label="Production 2.1.3" variant="outlined" />
               <Chip label="Production 2.1.2" variant="outlined" />
             </Box>
 
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Tags
+              Resources
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              <Chip label="Fraud" />
-              <Chip label="Ecommerce" />
-              <Chip label="Machine Learning" />
-              <Chip label="Python" />
-            </Box>
-
-            <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ marginTop: '16px' }}>
-              Documentation
-            </Typography>
-            <Box>
-              <Link href="#" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Description /> Model Documentation
-              </Link>
-              <Link href="#" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <GitHub /> GitHub Repository
-              </Link>
-              <Link href="#" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'  }}>
-                <Code /> Condition Code
-              </Link>
-              <Link href="#" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <CheckCircle /> Validation Code
-              </Link>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '16px',
+              }}
+            >
+              <StyledChip
+                icon={<Description style={{ color: '#3F51B5' }} />}
+                label="Docs"
+                clickable
+                variant="outlined"
+              />
+              <StyledChip
+                icon={<GitHub style={{ color: '#333' }} />}
+                label="Repo"
+                clickable
+                variant="outlined"
+              />
+              <StyledChip
+                icon={<Code style={{ color: '#FF0000' }} />}
+                label="Condition Code"
+                clickable
+                variant="outlined"
+              />
+              <StyledChip
+                icon={<CheckCircle style={{ color: '#4CAF50' }} />}
+                label="Validation Code"
+                clickable
+                variant="outlined"
+              />
             </Box>
           </SidePanel>
         </SplitContainer>
-
-        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ marginTop: '32px' }}>
-          Data Contracts
-        </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'left', gap: '16px', marginBottom: '32px' }}>
-          {dataContracts.map((contract, index) => (
-            <DataContractCard key={index} title={contract.title} description={contract.description} />
-          ))}
-        </Box>
       </Container>
+
+      {/* Snackbar for Alerts */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert onClose={handleCloseAlert} severity={alert.severity} sx={{ width: '100%' }}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
