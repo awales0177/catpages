@@ -11,7 +11,6 @@ import {
   TableContainer,
   TableRow,
   Chip,
-  Avatar,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -118,7 +117,7 @@ const App = () => {
           <TableContainer sx={{ flex: 1, marginTop: '60px' }}>
             <Accordion sx={{ borderRadius: '8px', boxShadow: 'none', border: '1px solid #ddd', marginBottom: '16px' }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}> 
-                <Typography><TableChartIcon sx={{ marginRight: '8px', verticalAlign: 'middle' }} />Select Table</Typography>
+                <Typography> Select Table</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ maxHeight: '200px', overflow: 'auto' }}>
                 <Box sx={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
