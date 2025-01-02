@@ -17,10 +17,11 @@ import {
   Tooltip,
   IconButton,
   Divider,
+  LinearProgress,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
-import { Code, History as HistoryIcon, HelpOutline } from '@mui/icons-material';
+import { Code, History as HistoryIcon, HelpOutline, Group, Cloud, DataUsage, Factory, ShoppingCart } from '@mui/icons-material';
 import FlowChart from './FlowChart';
 
 // Styling for the Header and Metadata
@@ -51,7 +52,19 @@ const StyledChip = styled(Chip)({
   },
 });
 
+const determineHealthColor = (current, latest) => {
+  const ratio = current / latest;
+  if (ratio == 1) return 'green';
+  if (ratio > 0.8) return '#d4aa00';
+  return 'red';
+};
+
 const DataContractsPage = () => {
+  const currentVersion = 1.4; // Example current version
+  const latestVersion = 3.5; // Example latest version
+  const versionsBehind = parseFloat((latestVersion - currentVersion).toFixed(2));
+  const healthColor = determineHealthColor(currentVersion, latestVersion);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Header */}
@@ -66,7 +79,7 @@ const DataContractsPage = () => {
       {/* Main Content */}
       <Container maxWidth="lg">
         <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Data Contracts
+          CLE-FARMAI
         </Typography>
 
         {/* Breadcrumbs */}
@@ -75,7 +88,10 @@ const DataContractsPage = () => {
             <Link underline="hover" color="inherit" href="/">
               Home
             </Link>
-            <Typography color="text.primary">Data Contracts</Typography>
+            <Link underline="hover" color="inherit" href="/">
+              Data Contracts
+            </Link>
+            <Typography color="text.primary">AWS-FARMAI</Typography>
           </Breadcrumbs>
         </Box>
 
@@ -93,15 +109,37 @@ const DataContractsPage = () => {
             </Box>
           </Box>
 
-          {/* Chips aligned to the right and next to each other */}
-          <Box sx={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
-            <Chip icon={<HistoryIcon />} label="Version 1.0.0" variant="outlined" />
-            <StyledChip
-              icon={<DisplaySettingsIcon style={{ color: '#4CAF50' }} />}
-              label="Downstream Application"
-              clickable
-              variant="outlined"
-            />
+          {/* Chips and Progress Bar */}
+          <Box sx={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <Chip icon={<HistoryIcon />} label="Product Version 1.0.0" variant="outlined" />
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <Box
+                sx={{
+                  width: '60px',
+                  height: '10px',
+                  borderRadius: '5px',
+                  backgroundColor: '#ddd',
+                  overflow: 'hidden',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: `${(currentVersion / latestVersion) * 100}%`,
+                    height: '100%',
+                    backgroundColor: healthColor,
+                  }}
+                />
+              </Box>
+              <Typography variant="caption" color="text.secondary">
+                {versionsBehind > 0 ? `${versionsBehind} versions behind` : 'Up-to-date'}
+              </Typography>
+            </Box>
           </Box>
         </MetadataSection>
 
@@ -112,46 +150,64 @@ const DataContractsPage = () => {
 
         {/* Divider */}
         <Box sx={{ paddingBottom: '20px' }}>
-          <Divider sx={{ borderColor: '#ddd'}} />
+          <Divider sx={{ borderColor: '#ddd' }} />
         </Box>
 
         {/* Roles and Responsibilities */}
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Roles and Responsibilities
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            Roles and Responsibilities
+          </Typography>
+          <StyledChip
+            icon={<DisplaySettingsIcon style={{ color: '#4CAF50' }} />}
+            label="Downstream Application"
+            clickable
+            variant="outlined"
+          />
+        </Box>
+
         <TableContainer>
           <Table>
             <TableBody>
               <TableRow>
                 <TableCell>
-                  Data Provider
-                  <Tooltip title="Responsible for supplying accurate and validated data, ensuring compliance with agreed standards, and managing data delivery schedules.">
-                    <IconButton size="small" color="inherit">
-                      <HelpOutline fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Factory sx={{ color: '#333' }} />
+                    <Typography component="span">Data Provider</Typography>
+                    <Tooltip title="Responsible for supplying accurate and validated data, ensuring compliance with agreed standards, and managing data delivery schedules.">
+                      <IconButton size="small" color="inherit">
+                        <HelpOutline fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </TableCell>
                 <TableCell>Infinity Farms, Toothman Farm</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
-                  Data Aggregator
-                  <Tooltip title="Responsible for collecting data from multiple sources, harmonizing it, and making it accessible for downstream analysis and operations.">
-                    <IconButton size="small" color="inherit">
-                      <HelpOutline fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <DataUsage sx={{ color: '#333' }} />
+                    <Typography component="span">Data Aggregator</Typography>
+                    <Tooltip title="Responsible for collecting data from multiple sources, harmonizing it, and making it accessible for downstream analysis and operations.">
+                      <IconButton size="small" color="inherit">
+                        <HelpOutline fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </TableCell>
                 <TableCell>Farm ETL</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
-                  Data Customer
-                  <Tooltip title="Ensures proper usage of the data as per the contract, validates data integrity upon receipt, and provides feedback for improvements if necessary.">
-                    <IconButton size="small" color="inherit">
-                      <HelpOutline fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ShoppingCart sx={{ color: '#333' }} />
+                    <Typography component="span">Data Customer</Typography>
+                    <Tooltip title="Ensures proper usage of the data as per the contract, validates data integrity upon receipt, and provides feedback for improvements if necessary.">
+                      <IconButton size="small" color="inherit">
+                        <HelpOutline fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </TableCell>
                 <TableCell>Farming AI</TableCell>
               </TableRow>
