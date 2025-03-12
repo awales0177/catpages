@@ -1,0 +1,8 @@
+{
+  "title": "Sample JSON",
+  "description": "This is a sample JSON file for use with the GitHub raw feature.",
+  "items": [
+    { "id": 1, "name": "Item One" },
+    { "id": 2, "name": "Item Two" }
+  ]
+}
